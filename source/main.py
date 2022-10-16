@@ -5,8 +5,8 @@ from aiogram.utils import executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 import db
-#
 
+#
 
 
 with open('config.yaml') as f:
@@ -18,9 +18,15 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
-    db.database('insert')
-    await bot.send_message(message.chat.id, 'HELLO!'.
-                           format(message.from_user))
+    user_id = message.from_user.id
+    first_name = message.from_user.first_name
+    if db.database('start', user_id, None) > 0:
+        await bot.send_message(message.chat.id, "👋 Успешная авторизация, {0.first_name}!".
+                               format(message.from_user))
+    else:
+        if db.database('registration', user_id, first_name):
+            await bot.send_message(message.chat.id, '👋 Успешная регистрация, {0.first_name}!'.
+                                   format(message.from_user))
 
     #
     # if db.to_mongo(message.from_user.id, None, 'start') > 0:
@@ -213,6 +219,7 @@ async def process_start_command(message: types.Message):
 async def shutdown(dispatcher: Dispatcher):
     await dispatcher.storage.close()
     await dispatcher.storage.wait_closed()
+
 
 if __name__ == '__main__':
     executor.start_polling(dp, on_shutdown=shutdown)

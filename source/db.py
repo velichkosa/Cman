@@ -5,7 +5,7 @@ with open('config.yaml') as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
 
 
-def database(action):
+def database(action, user_id, first_name):
     try:
         #   connect to exist database
         connection = psycopg2.connect(
@@ -16,11 +16,16 @@ def database(action):
         )
         connection.autocommit = True
         with connection.cursor() as cursor:
-            if action == 'insert':
+            if action == 'registration':
                 cursor.execute(
-                     """INSERT INTO "cmngr_user" (name) VALUES 
-                    ('petuhan');""")
+                     f"INSERT INTO cmngr_user (name, user_id) VALUES ('{first_name}', {user_id});")
                 print("[INFO] Data inserted successfully")
+                return True
+            if action == 'start':
+                print(user_id)
+                cursor.execute(
+                     f"SELECT name FROM cmngr_user WHERE user_id={user_id};")
+                return cursor.rowcount
 
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)

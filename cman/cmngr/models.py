@@ -27,6 +27,7 @@ class User(models.Model):
     password = models.CharField(max_length=100, blank=True, verbose_name='Пароль')
     pnum = models.IntegerField(blank=True, verbose_name='Телефон')
     role = models.ForeignKey(Role, blank=True, verbose_name='Должность', on_delete=models.PROTECT)
+    user_id = models.IntegerField(blank=True, verbose_name='TG')
 
 
 class Location(models.Model):
