@@ -22,10 +22,16 @@ def database(action, user_id, first_name):
                 print("[INFO] Data inserted successfully")
                 return True
             if action == 'start':
-                print(user_id)
                 cursor.execute(
                      f"SELECT name FROM cmngr_user WHERE user_id={user_id};")
                 return cursor.rowcount
+            if action == 'select_direction':
+                cursor.execute(
+                     f"SELECT name FROM cmngr_direction;")
+                direction = []
+                for row in cursor:
+                    direction.append(row[0])
+                return direction
 
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)

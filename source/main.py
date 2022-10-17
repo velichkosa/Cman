@@ -5,6 +5,7 @@ from aiogram.utils import executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 import db
+import keyboard as kb
 
 #
 
@@ -16,6 +17,7 @@ bot = Bot(token=config['token'])
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 
+# authorisation/registration after 'start' command
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
     user_id = message.from_user.id
@@ -28,25 +30,10 @@ async def process_start_command(message: types.Message):
             await bot.send_message(message.chat.id, '👋 Успешная регистрация, {0.first_name}!'.
                                    format(message.from_user))
 
-    #
-    # if db.to_mongo(message.from_user.id, None, 'start') > 0:
-    #     await bot.send_message(message.chat.id, MESSAGES['autorisation'].
-    #                            format(message.from_user))
-    # else:
-    #     insert_data = {
-    #         "user_id": message.from_user.id,
-    #         "username": message.from_user.username,
-    #         "first_name": message.from_user.first_name,
-    #         "last_name": message.from_user.last_name,
-    #         "full_name": message.from_user.full_name,
-    #         "email": [],
-    #         "language": ['ru', '🇷🇺 Русский'],
-    #         "interface_language": ['ru', '🇷🇺 Русский'],
-    #         "temp": str()}
-    #     db.to_mongo(message.from_user.id, insert_data, 'new_user')
-    #     await bot.send_message(message.chat.id, MESSAGES['registration'].
-    #                            format(message.from_user))
 
+@dp.message_handler(state='*', commands=['select_direction'])
+async def select_direction(message: types.Message):
+    await bot.send_message(message.chat.id, text='Выбери направление:', reply_markup=kb.select_direction_kb())
 
 # @dp.message_handler(content_types=['photo'])
 # async def text_recognition(message: types.Message):
